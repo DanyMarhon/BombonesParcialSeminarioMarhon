@@ -6,6 +6,8 @@
         PaisAZ,
         PaisZA,
         ProvinciaEstadoAZ,
-        ProvinciaEstadoZA
+        ProvinciaEstadoZA,
+        ClienteAZ,
+        ClienteZA
     }
 }

@@ -59,6 +59,8 @@
             btnSiguiente = new Button();
             btnAnterior = new Button();
             btnPrimero = new Button();
+            aZPorClienteToolStripMenuItem = new ToolStripMenuItem();
+            zAPorClienteToolStripMenuItem = new ToolStripMenuItem();
             panelGrilla.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvDatos).BeginInit();
             toolStrip1.SuspendLayout();
@@ -234,6 +236,7 @@
             // 
             // tsbOrdenar
             // 
+            tsbOrdenar.DropDownItems.AddRange(new ToolStripItem[] { aZPorClienteToolStripMenuItem, zAPorClienteToolStripMenuItem });
             tsbOrdenar.Image = Properties.Resources.list_40px;
             tsbOrdenar.ImageScaling = ToolStripItemImageScaling.None;
             tsbOrdenar.ImageTransparentColor = Color.Magenta;
@@ -349,6 +352,20 @@
             btnPrimero.UseVisualStyleBackColor = true;
             btnPrimero.Click += btnPrimero_Click;
             // 
+            // aZPorClienteToolStripMenuItem
+            // 
+            aZPorClienteToolStripMenuItem.Name = "aZPorClienteToolStripMenuItem";
+            aZPorClienteToolStripMenuItem.Size = new Size(180, 22);
+            aZPorClienteToolStripMenuItem.Text = "A - Z por Cliente";
+            aZPorClienteToolStripMenuItem.Click += aZPorClienteToolStripMenuItem_Click;
+            // 
+            // zAPorClienteToolStripMenuItem
+            // 
+            zAPorClienteToolStripMenuItem.Name = "zAPorClienteToolStripMenuItem";
+            zAPorClienteToolStripMenuItem.Size = new Size(180, 22);
+            zAPorClienteToolStripMenuItem.Text = "Z - A por Cliente";
+            zAPorClienteToolStripMenuItem.Click += zAPorClienteToolStripMenuItem_Click;
+            // 
             // frmClientes
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -402,5 +419,7 @@
         private DataGridViewTextBoxColumn colCliente;
         private DataGridViewTextBoxColumn colDireccion;
         private DataGridViewTextBoxColumn colTelefono;
+        private ToolStripMenuItem aZPorClienteToolStripMenuItem;
+        private ToolStripMenuItem zAPorClienteToolStripMenuItem;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Bombones.Datos.Interfaces;
 using Bombones.Entidades.Dtos;
 using Bombones.Entidades.Entidades;
+using Bombones.Entidades.Enumeraciones;
 using Bombones.Servicios.Intefaces;
 using System.Data.SqlClient;
 
@@ -140,14 +141,15 @@ namespace Bombones.Servicios.Servicios
             }
         }
 
-        public List<ClienteListDto> GetLista(int? pageNumber = null, int? pageSize = null)
+        public List<ClienteListDto> GetLista(int? pageNumber = null, int? pageSize = null, Orden? orden = Orden.Ninguno)
         {
             using (var conn = new SqlConnection(_cadena))
             {
                 conn.Open();
-                return _repositorioClientes.GetLista(conn, pageNumber, pageSize);
+                return _repositorioClientes!.GetLista(conn, pageNumber, pageSize, orden);
             }
         }
+
 
         public bool Existe(Cliente cliente)
         {

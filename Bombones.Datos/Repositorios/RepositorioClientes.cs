@@ -1,6 +1,7 @@
 ﻿using Bombones.Datos.Interfaces;
 using Bombones.Entidades.Dtos;
 using Bombones.Entidades.Entidades;
+using Bombones.Entidades.Enumeraciones;
 using Dapper;
 using System.Data.SqlClient;
 
@@ -92,30 +93,46 @@ namespace Bombones.Datos.Repositorios
                 selectQuery, new { @ClienteId = clienteId });
         }
 
-        public List<ClienteListDto> GetLista(SqlConnection conn, int? pageNumber, int? pageSize, SqlTransaction? tran)
+        public List<ClienteListDto> GetLista(SqlConnection conn, int? pageNumber, int? pageSize, Orden? orden = Orden.Ninguno, SqlTransaction? tran = null)
         {
             var offset = (pageNumber - 1) * pageSize;
+
             var selectQuery = @"SELECT 
-                c.ClienteId, 
-                c.Documento, 
-                c.Apellido,
-                c.Nombres,
-                d.Calle,
-                d.Altura,
-                ci.NombreCiudad AS Ciudad,
-                pe.NombreProvinciaEstado AS ProvinciaEstado, 
-                p.NombrePais AS Pais,
-                t.Numero 
-            FROM Clientes c
-            LEFT JOIN ClientesDirecciones cd ON c.ClienteId = cd.ClienteId
-            LEFT JOIN Direcciones d ON cd.DireccionId = d.DireccionId
-            LEFT JOIN ClientesTelefonos ct ON c.ClienteId = ct.ClienteId
-            LEFT JOIN Telefonos t ON ct.TelefonoId = t.TelefonoId
-            LEFT JOIN Paises p ON d.PaisId = p.PaisId
-            LEFT JOIN ProvinciasEstados pe ON d.ProvinciaEstadoId = pe.ProvinciaEstadoId
-            LEFT JOIN Ciudades ci ON d.CiudadId = ci.CiudadId
-            ORDER BY c.ClienteId 
-            OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
+        c.ClienteId, 
+        c.Documento, 
+        c.Apellido,
+        c.Nombres,
+        d.Calle,
+        d.Altura,
+        ci.NombreCiudad AS Ciudad,
+        pe.NombreProvinciaEstado AS ProvinciaEstado, 
+        p.NombrePais AS Pais,
+        t.Numero 
+    FROM Clientes c
+    LEFT JOIN ClientesDirecciones cd ON c.ClienteId = cd.ClienteId
+    LEFT JOIN Direcciones d ON cd.DireccionId = d.DireccionId
+    LEFT JOIN ClientesTelefonos ct ON c.ClienteId = ct.ClienteId
+    LEFT JOIN Telefonos t ON ct.TelefonoId = t.TelefonoId
+    LEFT JOIN Paises p ON d.PaisId = p.PaisId
+    LEFT JOIN ProvinciasEstados pe ON d.ProvinciaEstadoId = pe.ProvinciaEstadoId
+    LEFT JOIN Ciudades ci ON d.CiudadId = ci.CiudadId";
+
+            string orderBy = string.Empty;
+            switch (orden)
+            {
+                case Orden.Ninguno:
+                    orderBy = " ORDER BY c.Documento ";
+                    break;
+                case Orden.ClienteAZ:
+                    orderBy = " ORDER BY c.Apellido ASC ";
+                    break;
+                case Orden.ClienteZA:
+                    orderBy = " ORDER BY c.Apellido DESC ";
+                    break;
+            }
+
+            selectQuery += orderBy + " OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
+
 
             var clientes = new List<ClienteListDto>();
             conn.Query<Cliente, DireccionListDto, Telefono, ClienteListDto>

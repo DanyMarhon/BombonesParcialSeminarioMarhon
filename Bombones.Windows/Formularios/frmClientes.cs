@@ -13,6 +13,7 @@ namespace Bombones.Windows.Formularios
         private readonly IServiceProvider? _serviceProvider;
         private readonly IServiciosClientes? _servicio;
         private List<ClienteListDto>? lista;
+        private Orden orden = Orden.ClienteAZ;
 
         private int currentPage = 1;//pagina actual
         private int totalPages = 0;//total de paginas
@@ -71,7 +72,7 @@ namespace Bombones.Windows.Formularios
         {
             try
             {
-                lista = _servicio!.GetLista(currentPage, pageSize);
+                lista = _servicio!.GetLista(currentPage, pageSize, orden);
                 MostrarDatosEnGrilla(lista);
                 if (cboPaginas.Items.Count != totalPages)
                 {
@@ -281,16 +282,29 @@ namespace Bombones.Windows.Formularios
             if (cliente == null) return;
         }
 
+        private void aZPorClienteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            orden = Orden.ClienteAZ;
+            LoadData();
+        }
+
+        private void zAPorClienteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            orden = Orden.ClienteZA;
+            LoadData();
+        }
+
+
         //private void tsbFiltrar_Click(object sender, EventArgs e)
         //{
-            
+
         //        frmFormularioFiltro frm = new frmFormularioFiltro(_serviceProvider, filtroContexto) { Text = "Seleccionar Pais para Filtrar" };
         //        DialogResult dr = frm.ShowDialog(this);
         //        if (dr == DialogResult.Cancel) return;
         //        paisFiltro = frm.GetPais();
         //        if (paisFiltro is null) return;
 
-                
+
         //        totalRecords = _servicio!?.GetCantidad(paisFiltro) ?? 0;
         //        totalPages = (int)Math.Ceiling((decimal)totalRecords / pageSize);
 

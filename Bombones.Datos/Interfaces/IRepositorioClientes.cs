@@ -1,5 +1,6 @@
 ﻿using Bombones.Entidades.Dtos;
 using Bombones.Entidades.Entidades;
+using Bombones.Entidades.Enumeraciones;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -19,8 +20,7 @@ namespace Bombones.Datos.Interfaces
 
         void Editar(Cliente cliente, SqlConnection conn, SqlTransaction? tran=null);
         Cliente? GetClientePorId(int clienteId, SqlConnection conn);
-        List<ClienteListDto> GetLista(SqlConnection conn, int? currentPage, 
-            int? pageSize, SqlTransaction? tran=null);
+        List<ClienteListDto> GetLista(SqlConnection conn, int? currentPage, int? pageSize, Orden? orden = Orden.Ninguno, SqlTransaction? tran=null);
         int GetCantidad(SqlConnection conn);
     }
 }
