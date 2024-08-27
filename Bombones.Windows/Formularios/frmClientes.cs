@@ -277,7 +277,7 @@ namespace Bombones.Windows.Formularios
                     tsbFiltrar.Enabled = true;
                     LoadData();
                 }
-                
+
             }
             catch (Exception)
             {
@@ -337,6 +337,11 @@ namespace Bombones.Windows.Formularios
             LoadData();
             filterOn = true;
             tsbFiltrar.Enabled = false;
+        }
+
+        private void tsbBuscar_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

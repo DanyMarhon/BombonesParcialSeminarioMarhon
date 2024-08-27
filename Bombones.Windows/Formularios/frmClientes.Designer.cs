@@ -192,6 +192,7 @@
             tsbBuscar.Size = new Size(46, 59);
             tsbBuscar.Text = "Buscar";
             tsbBuscar.TextImageRelation = TextImageRelation.ImageAboveText;
+            tsbBuscar.Click += tsbBuscar_Click;
             // 
             // tsbFiltrar
             // 
