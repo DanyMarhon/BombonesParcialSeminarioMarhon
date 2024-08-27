@@ -268,9 +268,16 @@ namespace Bombones.Windows.Formularios
                 lista = _servicio!?.GetLista(currentPage, pageSize);
                 if (lista is not null)
                 {
-                    MostrarDatosEnGrilla(lista);
-
+                    currentPage = 1;
+                    orden = 0;
+                    paisFiltro = null;
+                    totalRecords = _servicio!?.GetCantidad() ?? 0;
+                    totalPages = (int)Math.Ceiling((decimal)totalRecords / pageSize);
+                    filterOn = false;
+                    tsbFiltrar.Enabled = true;
+                    LoadData();
                 }
+                
             }
             catch (Exception)
             {
@@ -319,39 +326,17 @@ namespace Bombones.Windows.Formularios
 
         private void tsbFiltrar_Click(object sender, EventArgs e)
         {
-            // Muestra el formulario de filtro
-            frmFormularioFiltro frm = new frmFormularioFiltro(_serviceProvider, filtroContexto)
-            {
-                Text = "Seleccionar País para Filtrar"
-            };
-
+            frmFormularioFiltro frm = new frmFormularioFiltro(_serviceProvider, filtroContexto) { Text = "Seleccionar Pais para Filtrar" };
             DialogResult dr = frm.ShowDialog(this);
-            if (dr == DialogResult.Cancel)
-                return;
-
-            // Obtén el objeto País desde el formulario de filtro
-            Pais paisFiltro = frm.GetPais();
-            if (paisFiltro is null)
-                return;
-
-            // Extrae el nombre del país como string
-            string nombrePaisFiltro = paisFiltro.NombrePais;
-
-            // Si el nombre del país es null o vacío, manejarlo adecuadamente
-            if (string.IsNullOrWhiteSpace(nombrePaisFiltro))
-            {
-                MessageBox.Show("El país seleccionado no es válido.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            // Obtén el total de registros con el filtro aplicado
-            totalRecords = _servicio!.GetCantidad(nombrePaisFiltro);
-
-            // Calcula el total de páginas
+            if (dr == DialogResult.Cancel) return;
+            paisFiltro = frm.GetPais();
+            if (paisFiltro is null) return;
+            totalRecords = _servicio!?.GetCantidad(paisFiltro) ?? 0;
             totalPages = (int)Math.Ceiling((decimal)totalRecords / pageSize);
 
-            // Carga los datos con el filtro aplicado
             LoadData();
+            filterOn = true;
+            tsbFiltrar.Enabled = false;
         }
     }
 }

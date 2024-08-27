@@ -92,14 +92,8 @@ namespace Bombones.Datos.Repositorios
             return conn.QuerySingleOrDefault<Cliente>(
                 selectQuery, new { @ClienteId = clienteId });
         }
-
-        public List<ClienteListDto> GetLista(
-    SqlConnection conn,
-    int? pageNumber,
-    int? pageSize,
-    Orden? orden = Orden.Ninguno,
-    string? paisFiltro = null,
-    SqlTransaction? tran = null)
+        public List<ClienteListDto> GetLista(SqlConnection conn,int? pageNumber,int? pageSize,
+            Orden? orden = Orden.Ninguno, Pais? pais = null, SqlTransaction? tran = null)
         {
             // Calcula el valor de offset
             var offset = (pageNumber.GetValueOrDefault(1) - 1) * pageSize.GetValueOrDefault(10);
@@ -124,9 +118,16 @@ namespace Bombones.Datos.Repositorios
             LEFT JOIN ProvinciasEstados pe ON d.ProvinciaEstadoId = pe.ProvinciaEstadoId
             LEFT JOIN Ciudades ci ON d.CiudadId = ci.CiudadId";
 
-            if (!string.IsNullOrEmpty(paisFiltro))
+            List<string> conditions = new List<string>();
+
+            if (pais != null)
             {
-                selectQuery += " WHERE p.NombrePais = @PaisFiltro";
+                conditions.Add("pe.PaisId=@paisId");
+            }
+
+            if (conditions.Any())
+            {
+                selectQuery += " WHERE " + string.Join(" AND ", conditions);
             }
 
             string orderBy = string.Empty;
@@ -184,7 +185,7 @@ namespace Bombones.Datos.Repositorios
                 {
                     @Offset = offset,
                     @PageSize = pageSize,
-                    @PaisFiltro = paisFiltro ?? (object)DBNull.Value
+                    @PaisId = pais ?? (object)DBNull.Value
                 },
                 splitOn: "ClienteId, Calle, Numero",
                 buffered: true,
@@ -194,22 +195,18 @@ namespace Bombones.Datos.Repositorios
             return clientes;
         }
 
-        public int GetCantidad(SqlConnection conn, string? paisFiltro = null)
+        public int GetCantidad(SqlConnection conn, Pais? pais = null, SqlTransaction? tran = null)
         {
-            var selectQuery = @"SELECT COUNT(*) 
-                        FROM Clientes c
+            var query = @"SELECT COUNT(*) FROM Clientes c
                         LEFT JOIN ClientesDirecciones cd ON c.ClienteId = cd.ClienteId
                         LEFT JOIN Direcciones d ON cd.DireccionId = d.DireccionId
                         LEFT JOIN Paises p ON d.PaisId = p.PaisId";
-
-            if (!string.IsNullOrEmpty(paisFiltro))
+            if (pais != null)
             {
-                selectQuery += " WHERE p.NombrePais = @PaisFiltro";
+                query += " WHERE p.PaisId = @PaisId";
+                return conn.ExecuteScalar<int>(query, new { PaisId = pais.PaisId });
             }
-
-            return conn.ExecuteScalar<int>(selectQuery, new { PaisFiltro = paisFiltro });
+            return conn.ExecuteScalar<int>(query);
         }
-
-
     }
 }

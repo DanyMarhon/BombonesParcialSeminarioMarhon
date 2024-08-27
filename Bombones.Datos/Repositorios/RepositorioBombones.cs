@@ -8,7 +8,7 @@ namespace Bombones.Datos.Repositorios
 {
     public class RepositorioBombones : IRepositorioBombones
     {
-        public List<BombonListDto>? GetLista(SqlConnection conn, int? currentPage, int? pageSize, SqlTransaction? tran)
+        public List<BombonListDto>? GetLista(SqlConnection conn, int? currentPage, int? pageSize, SqlTransaction? tran = null)
         {
             var selectQuery = @"SELECT b.BombonId, 
                            b.NombreBombon, 
@@ -42,6 +42,6 @@ namespace Bombones.Datos.Repositorios
             return conn.ExecuteScalar<int>(selectQuery);
         }
 
-
+        
     }
 }

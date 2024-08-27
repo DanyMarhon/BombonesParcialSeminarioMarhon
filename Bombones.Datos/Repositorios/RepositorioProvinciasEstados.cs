@@ -89,13 +89,8 @@ namespace Bombones.Datos.Repositorios
             return conn.ExecuteScalar<int>(query);
         }
 
-        public List<ProvinciaEstadoListDto> GetLista(
-            SqlConnection conn,
-            int? currentPage,
-            int? pageSize,
-            Orden? orden = Orden.Ninguno,
-            Pais? pais = null,
-            SqlTransaction? tran = null)
+        public List<ProvinciaEstadoListDto> GetLista(SqlConnection conn,int? currentPage,int? pageSize,
+            Orden? orden = Orden.Ninguno, Pais? pais = null, SqlTransaction? tran = null)
         {
             var selectQuery = @"SELECT pe.ProvinciaEstadoId, 
                         pe.NombreProvinciaEstado,

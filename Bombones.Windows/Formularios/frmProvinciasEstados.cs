@@ -293,6 +293,7 @@ namespace Bombones.Windows.Formularios
         {
             currentPage = 1;
             paisFiltro = null;
+            orden = 0;
             //lista = _servicio!?.GetLista(currentPage, pageSize, orden);
             totalRecords = _servicio!?.GetCantidad() ?? 0;
             totalPages = (int)Math.Ceiling((decimal)totalRecords / pageSize);
