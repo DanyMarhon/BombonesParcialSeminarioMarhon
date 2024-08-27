@@ -204,6 +204,7 @@ namespace Bombones.Windows.Formularios
             cboPaginas.Name = "cboPaginas";
             cboPaginas.Size = new Size(68, 23);
             cboPaginas.TabIndex = 26;
+            cboPaginas.SelectedIndexChanged += cboPaginas_SelectedIndexChanged;
             // 
             // label2
             // 
@@ -232,6 +233,7 @@ namespace Bombones.Windows.Formularios
             btnUltimo.Size = new Size(75, 41);
             btnUltimo.TabIndex = 20;
             btnUltimo.UseVisualStyleBackColor = true;
+            btnUltimo.Click += btnUltimo_Click;
             // 
             // btnSiguiente
             // 
@@ -242,6 +244,7 @@ namespace Bombones.Windows.Formularios
             btnSiguiente.Size = new Size(75, 41);
             btnSiguiente.TabIndex = 21;
             btnSiguiente.UseVisualStyleBackColor = true;
+            btnSiguiente.Click += btnSiguiente_Click;
             // 
             // btnAnterior
             // 
@@ -252,6 +255,7 @@ namespace Bombones.Windows.Formularios
             btnAnterior.Size = new Size(75, 41);
             btnAnterior.TabIndex = 22;
             btnAnterior.UseVisualStyleBackColor = true;
+            btnAnterior.Click += btnAnterior_Click;
             // 
             // btnPrimero
             // 
@@ -262,6 +266,7 @@ namespace Bombones.Windows.Formularios
             btnPrimero.Size = new Size(75, 41);
             btnPrimero.TabIndex = 23;
             btnPrimero.UseVisualStyleBackColor = true;
+            btnPrimero.Click += btnPrimero_Click;
             // 
             // panelGrilla
             // 

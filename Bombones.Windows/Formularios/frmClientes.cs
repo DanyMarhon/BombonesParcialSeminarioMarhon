@@ -1,7 +1,6 @@
 ﻿using Bombones.Entidades.Dtos;
 using Bombones.Entidades.Entidades;
 using Bombones.Entidades.Enumeraciones;
-using Bombones.Entidades.Extensions;
 using Bombones.Servicios.Intefaces;
 using Bombones.Windows.Helpers;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +19,9 @@ namespace Bombones.Windows.Formularios
         private int pageSize = 10;//registros por página
         private int totalRecords = 0;//cantidad de registros
 
+        private FiltroContexto filtroContexto = FiltroContexto.Pais;
+        private Pais? paisFiltro = null;
+        private bool filterOn = false;
         public frmClientes(IServiceProvider? serviceProvider)
         {
             InitializeComponent();
@@ -68,25 +70,45 @@ namespace Bombones.Windows.Formularios
                 throw;
             }
         }
+
         private void LoadData()
         {
             try
             {
-                lista = _servicio!.GetLista(currentPage, pageSize, orden);
+                lista = _servicio?.GetLista(currentPage, pageSize, orden, paisFiltro);
                 MostrarDatosEnGrilla(lista);
+
                 if (cboPaginas.Items.Count != totalPages)
                 {
                     CombosHelper.CargarComboPaginas(ref cboPaginas, totalPages);
                 }
-                txtCantidadPaginas.Text = totalPages.ToString();
-                cboPaginas.SelectedIndex = currentPage == 1 ? 0 : currentPage - 1;
-            }
-            catch (Exception)
-            {
 
-                throw;
+                txtCantidadPaginas.Text = totalPages.ToString();
+
+                cboPaginas.SelectedIndexChanged -= cboPaginas_SelectedIndexChanged;
+
+                if (totalPages > 0)
+                {
+                    cboPaginas.SelectedIndex = currentPage == 1 ? 0 : currentPage - 1;
+                    cboPaginas.Enabled = true; // Habilita el combo box si hay páginas
+                }
+                else
+                {
+                    cboPaginas.SelectedIndex = -1; // Ningún elemento seleccionado
+                    cboPaginas.Enabled = false; // Deshabilita el combo box si no hay páginas
+                }
+
+                cboPaginas.SelectedIndexChanged += cboPaginas_SelectedIndexChanged;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ocurrió un error al cargar los datos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+
+
+
         private void btnPrimero_Click(object sender, EventArgs e)
         {
             currentPage = 1;
@@ -295,24 +317,41 @@ namespace Bombones.Windows.Formularios
         }
 
 
-        //private void tsbFiltrar_Click(object sender, EventArgs e)
-        //{
+        private void tsbFiltrar_Click(object sender, EventArgs e)
+        {
+            // Muestra el formulario de filtro
+            frmFormularioFiltro frm = new frmFormularioFiltro(_serviceProvider, filtroContexto)
+            {
+                Text = "Seleccionar País para Filtrar"
+            };
 
-        //        frmFormularioFiltro frm = new frmFormularioFiltro(_serviceProvider, filtroContexto) { Text = "Seleccionar Pais para Filtrar" };
-        //        DialogResult dr = frm.ShowDialog(this);
-        //        if (dr == DialogResult.Cancel) return;
-        //        paisFiltro = frm.GetPais();
-        //        if (paisFiltro is null) return;
+            DialogResult dr = frm.ShowDialog(this);
+            if (dr == DialogResult.Cancel)
+                return;
 
+            // Obtén el objeto País desde el formulario de filtro
+            Pais paisFiltro = frm.GetPais();
+            if (paisFiltro is null)
+                return;
 
-        //        totalRecords = _servicio!?.GetCantidad(paisFiltro) ?? 0;
-        //        totalPages = (int)Math.Ceiling((decimal)totalRecords / pageSize);
+            // Extrae el nombre del país como string
+            string nombrePaisFiltro = paisFiltro.NombrePais;
 
-        //        LoadData();
-        //        filterOn = true;
-        //        tsbFiltrar.Enabled = false;
+            // Si el nombre del país es null o vacío, manejarlo adecuadamente
+            if (string.IsNullOrWhiteSpace(nombrePaisFiltro))
+            {
+                MessageBox.Show("El país seleccionado no es válido.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
-        //    }
-        //}
+            // Obtén el total de registros con el filtro aplicado
+            totalRecords = _servicio!.GetCantidad(nombrePaisFiltro);
+
+            // Calcula el total de páginas
+            totalPages = (int)Math.Ceiling((decimal)totalRecords / pageSize);
+
+            // Carga los datos con el filtro aplicado
+            LoadData();
+        }
     }
 }

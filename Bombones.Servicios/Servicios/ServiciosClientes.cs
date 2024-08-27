@@ -118,11 +118,11 @@ namespace Bombones.Servicios.Servicios
             }
         }
 
-        public int GetCantidad()
+        public int GetCantidad(string? paisFiltro = null)
         {
             using (var conn = new SqlConnection(_cadena))
             {
-                return _repositorioClientes.GetCantidad(conn);
+                return _repositorioClientes.GetCantidad(conn, paisFiltro);
             }
         }
 
@@ -141,7 +141,7 @@ namespace Bombones.Servicios.Servicios
             }
         }
 
-        public List<ClienteListDto> GetLista(int? pageNumber = null, int? pageSize = null, Orden? orden = Orden.Ninguno)
+        public List<ClienteListDto> GetLista(int? pageNumber = null, int? pageSize = null, Orden? orden = Orden.Ninguno, Pais? paisFiltro = null)
         {
             using (var conn = new SqlConnection(_cadena))
             {
@@ -160,5 +160,7 @@ namespace Bombones.Servicios.Servicios
             }
 
         }
+
+
     }
 }

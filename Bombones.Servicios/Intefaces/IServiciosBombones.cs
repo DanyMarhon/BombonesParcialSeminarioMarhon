@@ -4,7 +4,8 @@ namespace Bombones.Servicios.Intefaces
 {
     public interface IServiciosBombones
     {
-        List<BombonListDto> GetLista();
+        int GetCantidad();
+        List<BombonListDto>? GetLista(int? currentPage, int? pageSize);
 
     }
 }

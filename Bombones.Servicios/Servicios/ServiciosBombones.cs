@@ -1,5 +1,6 @@
 ﻿using Bombones.Datos.Interfaces;
 using Bombones.Entidades.Dtos;
+using Bombones.Entidades.Entidades;
 using Bombones.Servicios.Intefaces;
 using System.Data.SqlClient;
 
@@ -17,14 +18,23 @@ namespace Bombones.Servicios.Servicios
             _cadena = cadena;
         }
 
-        public List<BombonListDto> GetLista()
+        public int GetCantidad()
         {
             using (var conn = new SqlConnection(_cadena))
             {
                 conn.Open();
-                return _repositorio!.GetLista(conn);
+                return _repositorio!.GetCantidad(conn);
             }
 
+        }
+
+        public List<BombonListDto>? GetLista(int? currentPage, int? pageSize)
+        {
+            using (var conn = new SqlConnection(_cadena))
+            {
+                conn.Open();
+                return _repositorio!.GetLista(conn, currentPage, pageSize);
+            }
         }
     }
 }

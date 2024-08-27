@@ -48,23 +48,34 @@ namespace Bombones.Windows.Formularios
         {
             try
             {
-
                 lista = _servicio?.GetLista(currentPage, pageSize, orden, paisFiltro);
                 MostrarDatosEnGrilla(lista);
+
                 if (cboPaginas.Items.Count != totalPages)
                 {
                     CombosHelper.CargarComboPaginas(ref cboPaginas, totalPages);
                 }
+
                 txtCantidadPaginas.Text = totalPages.ToString();
+
                 cboPaginas.SelectedIndexChanged -= cboPaginas_SelectedIndexChanged;
-                cboPaginas.SelectedIndex = currentPage == 1 ? 0 : currentPage - 1;
+
+                if (totalPages > 0)
+                {
+                    cboPaginas.SelectedIndex = currentPage == 1 ? 0 : currentPage - 1;
+                    cboPaginas.Enabled = true; // Habilita el combo box si hay páginas
+                }
+                else
+                {
+                    cboPaginas.SelectedIndex = -1; // Ningún elemento seleccionado
+                    cboPaginas.Enabled = false; // Deshabilita el combo box si no hay páginas
+                }
+
                 cboPaginas.SelectedIndexChanged += cboPaginas_SelectedIndexChanged;
-
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                MessageBox.Show($"Ocurrió un error al cargar los datos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void btnPrimero_Click(object sender, EventArgs e)

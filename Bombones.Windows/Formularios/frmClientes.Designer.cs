@@ -49,6 +49,8 @@
             tsbImprimir = new ToolStripButton();
             toolStripSeparator3 = new ToolStripSeparator();
             tsbOrdenar = new ToolStripDropDownButton();
+            aZPorClienteToolStripMenuItem = new ToolStripMenuItem();
+            zAPorClienteToolStripMenuItem = new ToolStripMenuItem();
             tsbCerrar = new ToolStripButton();
             panelNavegacion = new Panel();
             txtCantidadPaginas = new TextBox();
@@ -59,8 +61,6 @@
             btnSiguiente = new Button();
             btnAnterior = new Button();
             btnPrimero = new Button();
-            aZPorClienteToolStripMenuItem = new ToolStripMenuItem();
-            zAPorClienteToolStripMenuItem = new ToolStripMenuItem();
             panelGrilla.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvDatos).BeginInit();
             toolStrip1.SuspendLayout();
@@ -202,6 +202,7 @@
             tsbFiltrar.Size = new Size(44, 59);
             tsbFiltrar.Text = "Filtrar";
             tsbFiltrar.TextImageRelation = TextImageRelation.ImageAboveText;
+            tsbFiltrar.Click += tsbFiltrar_Click;
             // 
             // tsbActualizar
             // 
@@ -244,6 +245,20 @@
             tsbOrdenar.Size = new Size(63, 59);
             tsbOrdenar.Text = "Ordenar";
             tsbOrdenar.TextImageRelation = TextImageRelation.ImageAboveText;
+            // 
+            // aZPorClienteToolStripMenuItem
+            // 
+            aZPorClienteToolStripMenuItem.Name = "aZPorClienteToolStripMenuItem";
+            aZPorClienteToolStripMenuItem.Size = new Size(161, 22);
+            aZPorClienteToolStripMenuItem.Text = "A - Z por Cliente";
+            aZPorClienteToolStripMenuItem.Click += aZPorClienteToolStripMenuItem_Click;
+            // 
+            // zAPorClienteToolStripMenuItem
+            // 
+            zAPorClienteToolStripMenuItem.Name = "zAPorClienteToolStripMenuItem";
+            zAPorClienteToolStripMenuItem.Size = new Size(161, 22);
+            zAPorClienteToolStripMenuItem.Text = "Z - A por Cliente";
+            zAPorClienteToolStripMenuItem.Click += zAPorClienteToolStripMenuItem_Click;
             // 
             // tsbCerrar
             // 
@@ -351,20 +366,6 @@
             btnPrimero.TabIndex = 23;
             btnPrimero.UseVisualStyleBackColor = true;
             btnPrimero.Click += btnPrimero_Click;
-            // 
-            // aZPorClienteToolStripMenuItem
-            // 
-            aZPorClienteToolStripMenuItem.Name = "aZPorClienteToolStripMenuItem";
-            aZPorClienteToolStripMenuItem.Size = new Size(180, 22);
-            aZPorClienteToolStripMenuItem.Text = "A - Z por Cliente";
-            aZPorClienteToolStripMenuItem.Click += aZPorClienteToolStripMenuItem_Click;
-            // 
-            // zAPorClienteToolStripMenuItem
-            // 
-            zAPorClienteToolStripMenuItem.Name = "zAPorClienteToolStripMenuItem";
-            zAPorClienteToolStripMenuItem.Size = new Size(180, 22);
-            zAPorClienteToolStripMenuItem.Text = "Z - A por Cliente";
-            zAPorClienteToolStripMenuItem.Click += zAPorClienteToolStripMenuItem_Click;
             // 
             // frmClientes
             // 

@@ -70,7 +70,7 @@ namespace Bombones.Datos.Repositorios
             }
         }
 
-        public void Editar(Cliente cliente, SqlConnection conn, SqlTransaction? tran=null)
+        public void Editar(Cliente cliente, SqlConnection conn, SqlTransaction? tran = null)
         {
             var updateQuery = @"UPDATE Clientes
             SET Documento=@Documento,
@@ -93,82 +93,123 @@ namespace Bombones.Datos.Repositorios
                 selectQuery, new { @ClienteId = clienteId });
         }
 
-        public List<ClienteListDto> GetLista(SqlConnection conn, int? pageNumber, int? pageSize, Orden? orden = Orden.Ninguno, SqlTransaction? tran = null)
+        public List<ClienteListDto> GetLista(
+    SqlConnection conn,
+    int? pageNumber,
+    int? pageSize,
+    Orden? orden = Orden.Ninguno,
+    string? paisFiltro = null,
+    SqlTransaction? tran = null)
         {
-            var offset = (pageNumber - 1) * pageSize;
+            // Calcula el valor de offset
+            var offset = (pageNumber.GetValueOrDefault(1) - 1) * pageSize.GetValueOrDefault(10);
 
             var selectQuery = @"SELECT 
-        c.ClienteId, 
-        c.Documento, 
-        c.Apellido,
-        c.Nombres,
-        d.Calle,
-        d.Altura,
-        ci.NombreCiudad AS Ciudad,
-        pe.NombreProvinciaEstado AS ProvinciaEstado, 
-        p.NombrePais AS Pais,
-        t.Numero 
-    FROM Clientes c
-    LEFT JOIN ClientesDirecciones cd ON c.ClienteId = cd.ClienteId
-    LEFT JOIN Direcciones d ON cd.DireccionId = d.DireccionId
-    LEFT JOIN ClientesTelefonos ct ON c.ClienteId = ct.ClienteId
-    LEFT JOIN Telefonos t ON ct.TelefonoId = t.TelefonoId
-    LEFT JOIN Paises p ON d.PaisId = p.PaisId
-    LEFT JOIN ProvinciasEstados pe ON d.ProvinciaEstadoId = pe.ProvinciaEstadoId
-    LEFT JOIN Ciudades ci ON d.CiudadId = ci.CiudadId";
+            c.ClienteId, 
+            c.Documento, 
+            c.Apellido,
+            c.Nombres,
+            d.Calle,
+            d.Altura,
+            ci.NombreCiudad AS Ciudad,
+            pe.NombreProvinciaEstado AS ProvinciaEstado, 
+            p.NombrePais AS Pais,
+            t.Numero 
+            FROM Clientes c
+            LEFT JOIN ClientesDirecciones cd ON c.ClienteId = cd.ClienteId
+            LEFT JOIN Direcciones d ON cd.DireccionId = d.DireccionId
+            LEFT JOIN ClientesTelefonos ct ON c.ClienteId = ct.ClienteId
+            LEFT JOIN Telefonos t ON ct.TelefonoId = t.TelefonoId
+            LEFT JOIN Paises p ON d.PaisId = p.PaisId
+            LEFT JOIN ProvinciasEstados pe ON d.ProvinciaEstadoId = pe.ProvinciaEstadoId
+            LEFT JOIN Ciudades ci ON d.CiudadId = ci.CiudadId";
+
+            if (!string.IsNullOrEmpty(paisFiltro))
+            {
+                selectQuery += " WHERE p.NombrePais = @PaisFiltro";
+            }
 
             string orderBy = string.Empty;
             switch (orden)
             {
-                case Orden.Ninguno:
-                    orderBy = " ORDER BY c.Documento ";
-                    break;
                 case Orden.ClienteAZ:
                     orderBy = " ORDER BY c.Apellido ASC ";
                     break;
                 case Orden.ClienteZA:
                     orderBy = " ORDER BY c.Apellido DESC ";
                     break;
+                default:
+                    orderBy = " ORDER BY c.Documento ";
+                    break;
             }
 
-            selectQuery += orderBy + " OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
+            selectQuery += orderBy;
 
+            // Añade la cláusula OFFSET y FETCH
+            if (pageNumber.HasValue && pageSize.HasValue)
+            {
+                selectQuery += $" OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
+            }
 
+            // Ejecuta la consulta y procesa los resultados
             var clientes = new List<ClienteListDto>();
-            conn.Query<Cliente, DireccionListDto, Telefono, ClienteListDto>
-                (selectQuery,
-                    (cliente, direccion, telefono) =>
+
+            // Validar offset antes de ejecutar la consulta
+            if (offset < 0)
+            {
+                throw new ArgumentException("El valor de offset no puede ser negativo.");
+            }
+
+            // Ejecuta la consulta utilizando Dapper
+            clientes = conn.Query<Cliente, DireccionListDto, Telefono, ClienteListDto>(
+                selectQuery,
+                (cliente, direccion, telefono) =>
+                {
+                    var clienteDto = clientes.FirstOrDefault(c => c.ClienteId == cliente.ClienteId);
+                    if (clienteDto == null)
                     {
-                        var clienteDto = clientes
-                        .FirstOrDefault(c => c.ClienteId == cliente.ClienteId);
-                        if (clienteDto is null)
+                        clienteDto = new ClienteListDto
                         {
-                            clienteDto = new ClienteListDto
-                            {
-                                ClienteId = cliente.ClienteId,
-                                Documento = cliente.Documento,
-                                NombreCompleto = $"{cliente.Apellido} {cliente.Nombres}",
-                                DireccionPrincipal = direccion.ToString(),
-                                TelefonoPrincipal = telefono.ToString()
-                            };
-                            clientes.Add(clienteDto);
-                        }
-                        return clienteDto;
-                    },
-                    new { @Offset = offset, @PageSize = pageSize },
-                    splitOn: "ClienteId, Calle, Numero",
-                    buffered: true
-                );
+                            ClienteId = cliente.ClienteId,
+                            Documento = cliente.Documento,
+                            NombreCompleto = $"{cliente.Apellido} {cliente.Nombres}",
+                            DireccionPrincipal = direccion?.ToString() ?? "N/A",
+                            TelefonoPrincipal = telefono?.ToString() ?? "N/A"
+                        };
+                        clientes.Add(clienteDto);
+                    }
+                    return clienteDto;
+                },
+                new
+                {
+                    @Offset = offset,
+                    @PageSize = pageSize,
+                    @PaisFiltro = paisFiltro ?? (object)DBNull.Value
+                },
+                splitOn: "ClienteId, Calle, Numero",
+                buffered: true,
+                transaction: tran
+            ).ToList();
+
             return clientes;
         }
 
-        public int GetCantidad(SqlConnection conn)
+        public int GetCantidad(SqlConnection conn, string? paisFiltro = null)
         {
-            var selectQuery = "SELECT COUNT(*) FROM Clientes";
-            List<string> conditions = new List<string>();
+            var selectQuery = @"SELECT COUNT(*) 
+                        FROM Clientes c
+                        LEFT JOIN ClientesDirecciones cd ON c.ClienteId = cd.ClienteId
+                        LEFT JOIN Direcciones d ON cd.DireccionId = d.DireccionId
+                        LEFT JOIN Paises p ON d.PaisId = p.PaisId";
 
-            return conn.ExecuteScalar<int>(selectQuery);
+            if (!string.IsNullOrEmpty(paisFiltro))
+            {
+                selectQuery += " WHERE p.NombrePais = @PaisFiltro";
+            }
 
+            return conn.ExecuteScalar<int>(selectQuery, new { PaisFiltro = paisFiltro });
         }
+
+
     }
 }

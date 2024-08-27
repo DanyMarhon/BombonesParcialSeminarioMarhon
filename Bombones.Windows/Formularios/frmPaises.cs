@@ -27,7 +27,6 @@ namespace Bombones.Windows.Formularios
             {
                 totalRecords = _servicio!.GetCantidad();
                 totalPages = (int)Math.Ceiling((decimal)totalRecords / pageSize);
-                currentPage = totalPages;
                 LoadData();
             }
             catch (Exception)
@@ -49,7 +48,16 @@ namespace Bombones.Windows.Formularios
                 }
                 txtCantidadPaginas.Text = totalPages.ToString();
                 cboPaginas.SelectedIndexChanged -= cboPaginas_SelectedIndexChanged;
-                cboPaginas.SelectedIndex = currentPage == 1 ? 0 : currentPage - 1;
+                if (totalPages > 0)
+                {
+                    cboPaginas.SelectedIndex = currentPage == 1 ? 0 : currentPage - 1;
+                    cboPaginas.Enabled = true; // Habilita el combo box si hay páginas
+                }
+                else
+                {
+                    cboPaginas.SelectedIndex = -1; // Ningún elemento seleccionado
+                    cboPaginas.Enabled = false; // Deshabilita el combo box si no hay páginas
+                }
                 cboPaginas.SelectedIndexChanged += cboPaginas_SelectedIndexChanged;
 
             }

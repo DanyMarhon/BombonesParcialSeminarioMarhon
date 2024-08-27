@@ -20,7 +20,7 @@ namespace Bombones.Datos.Interfaces
 
         void Editar(Cliente cliente, SqlConnection conn, SqlTransaction? tran=null);
         Cliente? GetClientePorId(int clienteId, SqlConnection conn);
-        List<ClienteListDto> GetLista(SqlConnection conn, int? currentPage, int? pageSize, Orden? orden = Orden.Ninguno, SqlTransaction? tran=null);
-        int GetCantidad(SqlConnection conn);
+        List<ClienteListDto> GetLista(SqlConnection conn, int? currentPage, int? pageSize, Orden? orden = Orden.Ninguno, String? paisFiltro = null, SqlTransaction? tran=null);
+        int GetCantidad(SqlConnection conn, String? paisFiltro = null);
     }
 }
