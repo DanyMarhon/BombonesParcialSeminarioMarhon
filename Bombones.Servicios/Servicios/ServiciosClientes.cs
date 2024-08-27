@@ -141,12 +141,12 @@ namespace Bombones.Servicios.Servicios
             }
         }
 
-        public List<ClienteListDto> GetLista(int? pageNumber = null, int? pageSize = null, Orden? orden = Orden.Ninguno, Pais? paisSeleccionado = null)
+        public List<ClienteListDto> GetLista(int? pageNumber, int? pageSize, Orden? orden = Orden.Ninguno, Pais? paisSeleccionado = null)
         {
             using (var conn = new SqlConnection(_cadena))
             {
                 conn.Open();
-                return _repositorioClientes!.GetLista(conn, pageNumber, pageSize, orden);
+                return _repositorioClientes!.GetLista(conn, pageNumber, pageSize, orden, paisSeleccionado);
             }
         }
 
@@ -160,7 +160,5 @@ namespace Bombones.Servicios.Servicios
             }
 
         }
-
-
     }
 }

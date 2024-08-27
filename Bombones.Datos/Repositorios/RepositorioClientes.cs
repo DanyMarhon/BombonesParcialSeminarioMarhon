@@ -122,7 +122,7 @@ namespace Bombones.Datos.Repositorios
 
             if (pais != null)
             {
-                conditions.Add("pe.PaisId=@paisId");
+                conditions.Add("d.PaisId=@paisId");
             }
 
             if (conditions.Any())
@@ -185,7 +185,8 @@ namespace Bombones.Datos.Repositorios
                 {
                     @Offset = offset,
                     @PageSize = pageSize,
-                    @PaisId = pais ?? (object)DBNull.Value
+                    @PaisId = pais?.PaisId
+                    //@PaisId = pais ?? (object)DBNull.Value
                 },
                 splitOn: "ClienteId, Calle, Numero",
                 buffered: true,
