@@ -3,6 +3,7 @@ using Bombones.Entidades.Dtos;
 using Bombones.Entidades.Entidades;
 using Bombones.Entidades.Enumeraciones;
 using Bombones.Servicios.Intefaces;
+using Dapper;
 using System.Data.SqlClient;
 
 namespace Bombones.Servicios.Servicios
@@ -159,6 +160,15 @@ namespace Bombones.Servicios.Servicios
                 return _repositorioClientes.Existe(cliente,conn);
             }
 
+        }
+
+        public List<ClienteListDto> BuscarClientesPorApellido(string apellido)
+        {
+            using (var conn = new SqlConnection(_cadena))
+            {
+                conn.Open();
+                return _repositorioClientes.BuscarClientesPorApellido(apellido, conn);
+            }
         }
     }
 }

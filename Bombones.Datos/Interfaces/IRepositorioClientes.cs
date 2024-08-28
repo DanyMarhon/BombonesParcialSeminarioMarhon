@@ -23,5 +23,6 @@ namespace Bombones.Datos.Interfaces
         List<ClienteListDto> GetLista(SqlConnection conn,int? pageNumber,int? pageSize,
             Orden? orden = Orden.Ninguno, Pais? pais = null, SqlTransaction? tran = null);
         int GetCantidad(SqlConnection conn, Pais? pais = null, SqlTransaction? tran = null);
+        List<ClienteListDto> BuscarClientesPorApellido(string apellido, SqlConnection conn, SqlTransaction? tran = null);
     }
 }

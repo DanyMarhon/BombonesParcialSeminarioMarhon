@@ -92,6 +92,26 @@ namespace Bombones.Datos.Repositorios
             return conn.QuerySingleOrDefault<Cliente>(
                 selectQuery, new { @ClienteId = clienteId });
         }
+
+        public List<ClienteListDto> BuscarClientesPorApellido(string apellido, SqlConnection conn, SqlTransaction? tran = null)
+        {
+            string query = @"
+        SELECT 
+            c.ClienteId, 
+            c.Documento, 
+            c.Apellido + ' ' + c.Nombres AS NombreCompleto, 
+            COALESCE(d.Calle + ' ' + d.Altura, 'N/A') AS DireccionPrincipal,
+            COALESCE(t.Numero, 'N/A') AS TelefonoPrincipal
+        FROM Clientes c
+        LEFT JOIN ClientesDirecciones cd ON c.ClienteId = cd.ClienteId
+        LEFT JOIN Direcciones d ON cd.DireccionId = d.DireccionId
+        LEFT JOIN ClientesTelefonos ct ON c.ClienteId = ct.ClienteId
+        LEFT JOIN Telefonos t ON ct.TelefonoId = t.TelefonoId
+        WHERE c.Apellido LIKE @Apellido + '%'";
+
+            return conn.Query<ClienteListDto>(query, new { Apellido = apellido }).ToList();
+        }
+
         public List<ClienteListDto> GetLista(SqlConnection conn,int? pageNumber,int? pageSize,
             Orden? orden = Orden.Ninguno, Pais? pais = null, SqlTransaction? tran = null)
         {

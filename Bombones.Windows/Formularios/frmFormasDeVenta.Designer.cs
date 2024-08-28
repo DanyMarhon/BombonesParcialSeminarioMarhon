@@ -32,6 +32,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmFormasDeVenta));
             panel1 = new Panel();
             dgvDatos = new DataGridView();
+            FormaDeVentaId = new DataGridViewTextBoxColumn();
+            Descripción = new DataGridViewTextBoxColumn();
             toolStrip1 = new ToolStrip();
             tsbNuevo = new ToolStripButton();
             tsbBorrar = new ToolStripButton();
@@ -43,8 +45,6 @@
             tsbImprimir = new ToolStripButton();
             toolStripSeparator3 = new ToolStripSeparator();
             tsbCerrar = new ToolStripButton();
-            FormaDeVentaId = new DataGridViewTextBoxColumn();
-            Descripción = new DataGridViewTextBoxColumn();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvDatos).BeginInit();
             toolStrip1.SuspendLayout();
@@ -76,6 +76,21 @@
             dgvDatos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvDatos.Size = new Size(800, 388);
             dgvDatos.TabIndex = 0;
+            // 
+            // FormaDeVentaId
+            // 
+            FormaDeVentaId.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            FormaDeVentaId.HeaderText = "FormaDeVentaId";
+            FormaDeVentaId.Name = "FormaDeVentaId";
+            FormaDeVentaId.ReadOnly = true;
+            FormaDeVentaId.Visible = false;
+            // 
+            // Descripción
+            // 
+            Descripción.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Descripción.HeaderText = "Descripcion";
+            Descripción.Name = "Descripción";
+            Descripción.ReadOnly = true;
             // 
             // toolStrip1
             // 
@@ -173,21 +188,7 @@
             tsbCerrar.Size = new Size(44, 59);
             tsbCerrar.Text = "Cerrar";
             tsbCerrar.TextImageRelation = TextImageRelation.ImageAboveText;
-            // 
-            // FormaDeVentaId
-            // 
-            FormaDeVentaId.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            FormaDeVentaId.HeaderText = "FormaDeVentaId";
-            FormaDeVentaId.Name = "FormaDeVentaId";
-            FormaDeVentaId.ReadOnly = true;
-            FormaDeVentaId.Visible = false;
-            // 
-            // Descripción
-            // 
-            Descripción.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            Descripción.HeaderText = "Descripcion";
-            Descripción.Name = "Descripción";
-            Descripción.ReadOnly = true;
+            tsbCerrar.Click += tsbCerrar_Click;
             // 
             // frmFormasDeVenta
             // 

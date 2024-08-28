@@ -17,16 +17,16 @@ namespace Bombones.Datos.Repositorios
             {
             }
 
-            public void Agregar(FormaDeVenta tipo, SqlConnection conn, SqlTransaction? tran = null)
+            public void Agregar(FormaDeVenta forma, SqlConnection conn, SqlTransaction? tran = null)
             {
                 string insertQuery = @"INSERT INTO FormasVentas (Descripcion) 
                     VALUES(@Descripcion); SELECT CAST(SCOPE_IDENTITY() as int)";
 
-                var primaryKey = conn.QuerySingle<int>(insertQuery, tipo, tran);
+                var primaryKey = conn.QuerySingle<int>(insertQuery, forma, tran);
                 if (primaryKey > 0)
                 {
 
-                    tipo.FormaDeVentaId = primaryKey;
+                    forma.FormaDeVentaId = primaryKey;
                     return;
                 }
 
@@ -36,7 +36,7 @@ namespace Bombones.Datos.Repositorios
         public void Borrar(int formaId, SqlConnection conn, SqlTransaction? tran = null)
         {
             string deleteQuery = @"DELETE FROM FormasVentas 
-        WHERE FormaDeVentaId=@formaId";
+                    WHERE FormaDeVentaId=@formaId";
             int registrosAfectados = conn
                 .Execute(deleteQuery, new { formaId }, tran);
             if (registrosAfectados == 0)

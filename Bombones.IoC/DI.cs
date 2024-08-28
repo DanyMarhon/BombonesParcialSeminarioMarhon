@@ -19,6 +19,7 @@ namespace Bombones.IoC
             service.AddScoped<IRepositorioPaises, RepositorioPaises>();
             service.AddScoped<IRepositorioTiposDeChocolates, RepositorioTiposDeChocolates>();
             service.AddScoped<IRepositorioTiposDeNueces, RepositorioTiposDeNueces>();
+            service.AddScoped<IRepositorioFormaDeVenta, RepositorioFormaDeVenta>();
             service.AddScoped<IRepositorioProvinciasEstados, RepositorioProvinciasEstados>();
 
             service.AddScoped<IRepositorioCiudades, RepositorioCiudades>();

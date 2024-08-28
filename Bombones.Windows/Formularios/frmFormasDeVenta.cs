@@ -1,4 +1,5 @@
-﻿using Bombones.Entidades.Entidades;
+﻿using Bombones.Entidades.Dtos;
+using Bombones.Entidades.Entidades;
 using Bombones.Servicios.Intefaces;
 using Bombones.Windows.Helpers;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,11 +8,13 @@ namespace Bombones.Windows.Formularios
 {
     public partial class frmFormasDeVenta : Form
     {
+        private readonly IServiceProvider? _serviceProvider;
         private readonly IServiciosFormaDeVenta? _servicio;
         private List<FormaDeVenta>? lista;
         public frmFormasDeVenta(IServiceProvider? serviceProvider)
         {
             InitializeComponent();
+            _serviceProvider = serviceProvider;
             _servicio = serviceProvider?.GetService<IServiciosFormaDeVenta>()
                 ?? throw new ApplicationException("Dependencias no cargadas!!!"); ;
         }
@@ -55,14 +58,14 @@ namespace Bombones.Windows.Formularios
                 {
                     return;
                 }
-                FormaDeVenta? tipo = frm.GetFormaDeVenta();
-                if (tipo is not null)
+                FormaDeVenta? forma = frm.GetFormaDeVenta();
+                if (forma is not null)
                 {
-                    if (!_servicio!.Existe(tipo))
+                    if (!_servicio!.Existe(forma))
                     {
-                        _servicio!.Guardar(tipo);
+                        _servicio!.Guardar(forma);
                         DataGridViewRow r = GridHelper.ConstruirFila(dgvDatos);
-                        GridHelper.SetearFila(r, tipo);
+                        GridHelper.SetearFila(r, forma);
                         GridHelper.AgregarFila(r, dgvDatos);
                         MessageBox.Show("Registro agregado",
                             "Mensaje",
@@ -95,8 +98,10 @@ namespace Bombones.Windows.Formularios
                 return;
             }
             var r = dgvDatos.SelectedRows[0];
+            if (r.Tag is null) return;
 
-            FormaDeVenta forma = (r.Tag as FormaDeVenta) ?? new FormaDeVenta();
+            //FormaDeVenta forma = (r.Tag as FormaDeVenta);
+            var forma = (FormaDeVenta)r.Tag;
 
             try
             {
@@ -177,6 +182,11 @@ namespace Bombones.Windows.Formularios
                             MessageBoxIcon.Error);
 
             }
+        }
+
+        private void tsbCerrar_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

@@ -31,14 +31,14 @@ namespace Bombones.Servicios.Servicios
 
             }
         }
-        public void Borrar(int formaDeVenta)
+        public void Borrar(int formaDeVentaId)
         {
             using (var conn = new SqlConnection(_cadena))
             {
                 conn.Open();
                 using (var tran = conn.BeginTransaction())
                 {
-                    _repositorio!.Borrar(formaDeVenta, conn, tran);
+                    _repositorio!.Borrar(formaDeVentaId, conn, tran);
 
                 }
             }

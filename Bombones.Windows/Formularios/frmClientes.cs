@@ -276,6 +276,16 @@ namespace Bombones.Windows.Formularios
                     filterOn = false;
                     tsbFiltrar.Enabled = true;
                     LoadData();
+
+                    //Activo los botones de paginación nuevamente
+                    cboPaginas.Visible = true;
+                    label1.Visible = true;
+                    label2.Visible = true;
+                    txtCantidadPaginas.Visible = true;
+                    btnPrimero.Visible = true;
+                    btnAnterior.Visible = true;
+                    btnSiguiente.Visible = true;
+                    btnUltimo.Visible = true;
                 }
 
             }
@@ -341,7 +351,28 @@ namespace Bombones.Windows.Formularios
 
         private void tsbBuscar_Click(object sender, EventArgs e)
         {
+            frmFormularioBusqueda frm = new frmFormularioBusqueda(_serviceProvider) { Text = "Ingresar apellido para buscar" };
+            DialogResult dr = frm.ShowDialog(this);
+            if (dr == DialogResult.Cancel) return;
+            string apellidoBuscado = frm.ApellidoBuscado;
+            if (string.IsNullOrEmpty(apellidoBuscado)) return;
 
+            // Llamar al servicio para buscar clientes por apellido
+            var clientesFiltrados = _servicio!.BuscarClientesPorApellido(apellidoBuscado);
+            MostrarDatosEnGrilla(clientesFiltrados);
+
+            // Ocultar botones y vistas de paginado porque cuando busco
+            // se me rompe la paginación, consultar a Carlos!!!!
+            cboPaginas.Visible = false;
+            label1.Visible = false;
+            label2.Visible = false;
+            txtCantidadPaginas.Visible = false;
+            btnPrimero.Visible = false;
+            btnAnterior.Visible = false;
+            btnSiguiente.Visible = false;
+            btnUltimo.Visible = false;
+            // Luego los activo al refrescar
+            
         }
     }
 }
